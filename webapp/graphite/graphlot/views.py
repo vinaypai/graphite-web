@@ -1,6 +1,6 @@
 import re
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.conf import settings
 
@@ -30,7 +30,7 @@ def graphlot_render(request):
       'events' : events,
       'slash' : get_script_prefix()
     }
-    return render_to_response("graphlot.html", context)
+    return render(request, "graphlot.html", context)
 
 def get_data(request):
     """Get the data for one series."""
@@ -77,7 +77,7 @@ def header(request):
     'documentation_url' : settings.DOCUMENTATION_URL,
     'slash' : get_script_prefix()
   }
-  return render_to_response("browserHeader.html", context)
+  return render(request, "browserHeader.html", context)
 
 
 def browser(request):
@@ -91,7 +91,7 @@ def browser(request):
     context['queryString'] = context['queryString'].replace('#','%23')
   if context['target']:
     context['target'] = context['target'].replace('#','%23') #js libs terminate a querystring on #
-  return render_to_response("browser.html", context)
+  return render(request, "browser.html", context)
 
 
 def search(request):

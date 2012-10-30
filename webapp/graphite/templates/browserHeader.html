@@ -68,7 +68,7 @@ img.toolbar:active {
 
 <body bgcolor="white">
 
-<img  src="/content/img/graphite_short.png" alt="Graphite" style="border: 0px solid" align='top'/>
+<img  src="{{MEDIA_URL}}/img/graphite_short.png" alt="Graphite" style="border: 0px solid" align='top'/>
 
 <!-- Right side (only works in firefox for some reason) -->
 <!--
@@ -81,10 +81,10 @@ img.toolbar:active {
 
  <tr><td style='font-size: smaller;'>
   {% if user.is_authenticated %}
-   Logged in as {{ user.username }}, <a href="/account/logout/" target="_top">logout</a> &nbsp;
-   (<a href="/account/edit/" target="_top">edit profile</a>)
+   Logged in as {{ user.username }}, <a href="{% url account.views.logoutView %}" target="_top">logout</a> &nbsp;
+   (<a href="{% url account.views.editProfile %}" target="_top">edit profile</a>)
   {% else %}
-   <a href="{{login_url}}" target="_top">Login</a>
+   <a href="{% url account.views.loginView %}" target="_top">Login</a>
   {% endif %}
  </td></tr>
 
@@ -95,9 +95,9 @@ img.toolbar:active {
  </td></tr>
 
  <tr><td style='font-size: smaller;'>
-  User Interface: <a href="/dashboard/" target="_top">Dashboard</a> |
-  <a href="/graphlot/" target="_top">flot (experimental)</a> |
-  <a href="/events/" target="_top">events (experimental)</a> |
+  User Interface: <a href="{% url dashboard.views.dashboard %}" target="_top">Dashboard</a> |
+  <a href="{% url graphlot.views.graphlot_render %}" target="_top">flot (experimental)</a> |
+  <a href="{% url events.views.view_events %}" target="_top">events (experimental)</a> |
  </td></tr>
 
 </table>

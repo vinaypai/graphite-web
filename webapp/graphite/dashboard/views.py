@@ -4,7 +4,7 @@ import errno
 from os.path import getmtime, join, exists
 from urllib import urlencode
 from ConfigParser import ConfigParser
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.http import HttpResponse, QueryDict
 from django.conf import settings
 from graphite.util import json
@@ -140,7 +140,7 @@ def dashboard(request, name=None):
     else:
       context['initialState'] = dashboard.state
 
-  return render_to_response("dashboard.html", context)
+  return render(request, "dashboard.html", context)
 
 
 def save(request, name):
@@ -204,7 +204,7 @@ def find(request):
 
 def help(request):
   context = {}
-  return render_to_response("dashboardHelp.html", context)
+  return render(request, "dashboardHelp.html", context)
 
 def email(request):
     sender = request.POST['sender']

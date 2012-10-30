@@ -55,7 +55,7 @@ function createComposerWindow(myComposer) {
     tbar: topToolbar,
     buttons: bottomToolbar,
     buttonAlign: 'left',
-    items: { html: "<img id='image-viewer' src='/render'/>", region: "center" },
+    items: { html: "<img id='image-viewer' src='../render'/>", region: "center" },
     listeners: {
       activate: keepDataWindowOnTop,
       show: fitImageToWindow,

@@ -38,7 +38,7 @@ from django.template import Context, loader
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
-
+from django.core.urlresolvers import reverse
 
 def renderView(request):
   start = time()
@@ -271,12 +271,13 @@ def delegateRendering(graphType, graphOptions):
         connection = HTTPConnectionWithTimeout(server)
         connection.timeout = settings.REMOTE_RENDER_CONNECT_TIMEOUT
       # Send the request
+      url = reverse('graphite.render.views.renderLocalView')
       try:
-        connection.request('POST','/render/local/', postData)
+        connection.request('POST', url, postData)
       except CannotSendRequest:
         connection = HTTPConnectionWithTimeout(server) #retry once
         connection.timeout = settings.REMOTE_RENDER_CONNECT_TIMEOUT
-        connection.request('POST', '/render/local/', postData)
+        connection.request('POST', url, postData)
       # Read the response
       response = connection.getresponse()
       assert response.status == 200, "Bad response code %d from %s" % (response.status,server)

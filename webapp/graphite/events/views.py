@@ -2,7 +2,7 @@ import datetime
 import time
 
 from django.http import HttpResponse
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 
 from graphite.util import json
 from graphite.events import models
@@ -27,7 +27,7 @@ def view_events(request):
         context = { 'events' : fetch(request),
             'slash' : get_script_prefix()
         }
-        return render_to_response("events.html", context)
+        return render(request, "events.html", context)
     else:
         return post_event(request)
 
@@ -36,7 +36,7 @@ def detail(request, event_id):
     context = { 'event' : e,
        'slash' : get_script_prefix()
     }
-    return render_to_response("event.html", context)
+    return render(render, "event.html", context)
 
 
 def post_event(request):
