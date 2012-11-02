@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License."""
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from graphite.util import getProfile
@@ -30,14 +30,14 @@ def loginView(request):
   if username and password:
     user = authenticate(username=username,password=password)
     if user is None:
-      return render_to_response("login.html",{'authenticationFailed' : True, 'nextPage' : nextPage})
+      return render(request, "login.html", {'authenticationFailed' : True, 'nextPage' : nextPage})
     elif not user.is_active:
-      return render_to_response("login.html",{'accountDisabled' : True, 'nextPage' : nextPage})
+      return render(request, "login.html", {'accountDisabled' : True, 'nextPage' : nextPage})
     else:
       login(request,user)
       return HttpResponseRedirect(nextPage)
   else:
-    return render_to_response("login.html",{'nextPage' : nextPage})
+    return render(request, "login.html", {'nextPage' : nextPage})
 
 def logoutView(request):
   nextPage = request.GET.get('nextPage','/')
@@ -48,7 +48,7 @@ def editProfile(request):
   if not request.user.is_authenticated():
     return HttpResponseRedirect('../..')
   context = { 'profile' : getProfile(request) }
-  return render_to_response("editProfile.html",context)
+  return render(request, "editProfile.html", context)
 
 def updateProfile(request):
   profile = getProfile(request,allowDefault=False)

@@ -121,7 +121,7 @@ class RemoteNode:
 
     connection = HTTPConnectionWithTimeout(self.store.host)
     connection.timeout = settings.REMOTE_STORE_FETCH_TIMEOUT
-    connection.request('GET', '/render/?' + query_string)
+    connection.request('GET', reverse('graphite.render.views.renderView') + '?' + query_string)
     response = connection.getresponse()
     assert response.status == 200, "Failed to retrieve remote data: %d %s" % (response.status, response.reason)
     rawData = response.read()

@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License."""
 
 import re
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
 from graphite.account.models import Profile
@@ -37,7 +37,7 @@ def header(request):
   context['profile'] = getProfile(request)
   context['documentation_url'] = settings.DOCUMENTATION_URL
   context['login_url'] = settings.LOGIN_URL
-  return render_to_response("browserHeader.html", context)
+  return render(request, "browserHeader.html", context)
 
 
 def browser(request):
@@ -47,10 +47,10 @@ def browser(request):
     'target' : request.GET.get('target')
   }
   if context['queryString']:
-    context['queryString'] = context['queryString'].replace('#','%23')
+    context['queryString'] = context['queryString'].replace('#', '%23')
   if context['target']:
-    context['target'] = context['target'].replace('#','%23') #js libs terminate a querystring on #
-  return render_to_response("browser.html", context) 
+    context['target'] = context['target'].replace('#', '%23')  # js libs terminate a querystring on #
+  return render(request, "browser.html", context)
 
 
 def search(request):
@@ -59,7 +59,7 @@ def search(request):
     return HttpResponse("")
 
   patterns = query.split()
-  regexes = [re.compile(p,re.I) for p in patterns]
+  regexes = [re.compile(p, re.I) for p in patterns]
   def matches(s):
     for regex in regexes:
       if regex.search(s):
@@ -71,7 +71,7 @@ def search(request):
   index_file = open(settings.INDEX_FILE)
   for line in index_file:
     if matches(line):
-      results.append( line.strip() )
+      results.append(line.strip())
     if len(results) >= 100:
       break
 
@@ -82,7 +82,7 @@ def search(request):
 
 def myGraphLookup(request):
   "View for My Graphs navigation"
-  profile = getProfile(request,allowDefault=False)
+  profile = getProfile(request, allowDefault=False)
   assert profile
 
   nodes = []
@@ -98,7 +98,7 @@ def myGraphLookup(request):
   }
 
   try:
-    path = str( request.GET['path'] )
+    path = str(request.GET['path'])
 
     if path:
       if path.endswith('.'):
@@ -112,13 +112,13 @@ def myGraphLookup(request):
 
     matches = [ graph for graph in profile.mygraph_set.all().order_by('name') if graph.name.startswith(userpath_prefix) ]
 
-    log.info( "myGraphLookup: username=%s, path=%s, userpath_prefix=%s, %ld graph to process" % (profile.user.username, path, userpath_prefix, len(matches)) )
+    log.info("myGraphLookup: username=%s, path=%s, userpath_prefix=%s, %ld graph to process" % (profile.user.username, path, userpath_prefix, len(matches)))
     branch_inserted = set()
     leaf_inserted = set()
 
-    for graph in matches: #Now let's add the matching graph
+    for graph in matches:  # Now let's add the matching graph
       isBranch = False
-      dotPos = graph.name.find( '.', len(userpath_prefix) )
+      dotPos = graph.name.find('.', len(userpath_prefix))
 
       if dotPos >= 0:
         isBranch = True
@@ -134,13 +134,13 @@ def myGraphLookup(request):
       node = {'text' : str(name) }
 
       if isBranch:
-        node.update( { 'id' : str(userpath_prefix + name + '.') } )
+        node.update({ 'id' : str(userpath_prefix + name + '.') })
         node.update(branchNode)
 
       else:
         m = md5()
         m.update(name)
-        node.update( { 'id' : str(userpath_prefix + m.hexdigest()), 'graphUrl' : str(graph.url) } )
+        node.update({ 'id' : str(userpath_prefix + m.hexdigest()), 'graphUrl' : str(graph.url) })
         node.update(leafNode)
 
       nodes.append(node)
@@ -162,7 +162,7 @@ def userGraphLookup(request):
 
   if user:
     username = user
-    graphPath = path[len(username)+1:]
+    graphPath = path[len(username) + 1:]
   elif '.' in path:
     username, graphPath = path.split('.', 1)
   else:
@@ -216,18 +216,18 @@ def userGraphLookup(request):
           continue
         inserted.add(nodeName)
 
-        if '.' in relativePath: # branch
+        if '.' in relativePath:  # branch
           node = {
             'text' : str(nodeName),
             'id' : str(username + '.' + prefix + nodeName + '.'),
           }
           node.update(branchNode)
-        else: # leaf
+        else:  # leaf
           m = md5()
           m.update(nodeName)
 
           node = {
-            'text' : str(nodeName ),
+            'text' : str(nodeName),
             'id' : str(username + '.' + prefix + m.hexdigest()),
             'graphUrl' : str(graph.url),
           }
@@ -251,18 +251,18 @@ def json_response(nodes, request=None):
     jsonp = request.REQUEST.get('jsonp', False)
   else:
     jsonp = False
-  #json = str(nodes) #poor man's json encoder for simple types
+  # json = str(nodes) #poor man's json encoder for simple types
   json_data = json.dumps(nodes)
   if jsonp:
-    response = HttpResponse("%s(%s)" % (jsonp, json_data),mimetype="text/javascript")
+    response = HttpResponse("%s(%s)" % (jsonp, json_data), mimetype="text/javascript")
   else:
-    response = HttpResponse(json_data,mimetype="application/json")
+    response = HttpResponse(json_data, mimetype="application/json")
   response['Pragma'] = 'no-cache'
   response['Cache-Control'] = 'no-cache'
   return response
 
 
-def any(iterable): #python2.4 compatibility
+def any(iterable):  # python2.4 compatibility
   for i in iterable:
     if i:
       return True

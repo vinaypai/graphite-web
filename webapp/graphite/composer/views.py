@@ -26,7 +26,7 @@ from graphite.util import getProfile
 from graphite.logger import log
 from graphite.account.models import MyGraph
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
@@ -43,7 +43,7 @@ def composer(request):
     'debug' : settings.DEBUG,
     'jsdebug' : settings.DEBUG,
   }
-  return render_to_response("composer.html",context)
+  return render(request, "composer.html", context)
 
 
 def mygraph(request):
